@@ -1,0 +1,20 @@
+# Node / Frontend
+siliconmind/node_modules/
+siliconmind/.next/
+siliconmind/dist/
+siliconmind/.env
+siliconmind/.env.local
+
+# Python / Backend
+ai_backend/.venv/
+ai_backend/venv/
+ai_backend/__pycache__/
+ai_backend/**/*.pyc
+ai_backend/.env
+ai_backend/vector_db/
+ai_backend/uploads/
+*.sqlite3
+
+# OS
+.DS_Store
+Thumbs.db
