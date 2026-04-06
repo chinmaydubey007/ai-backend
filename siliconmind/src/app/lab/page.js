@@ -7,7 +7,7 @@ import remarkGfm from 'remark-gfm';
 import rehypeRaw from 'rehype-raw';
 import MermaidDiagram from '../components/MermaidDiagram';
 
-const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+const BACKEND_URL = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000').replace(/\/$/, '');
 
 export default function LabPage() {
   const [sidebarOpen, setSidebarOpen] = useState(true);

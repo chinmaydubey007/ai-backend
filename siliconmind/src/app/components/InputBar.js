@@ -1,5 +1,6 @@
-'use client';
 import { useState, useRef, useEffect } from 'react';
+
+const BACKEND_URL = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000').replace(/\/$/, '');
 
 export default function InputBar({ onSend, onUpload, disabled = false }) {
   const [input, setInput] = useState('');
@@ -52,7 +53,7 @@ export default function InputBar({ onSend, onUpload, disabled = false }) {
       const formData = new FormData();
       formData.append('file', file);
       
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/v1/documents/upload`, {
+      const res = await fetch(`${BACKEND_URL}/api/v1/documents/upload`, {
         method: 'POST',
         body: formData,
       });

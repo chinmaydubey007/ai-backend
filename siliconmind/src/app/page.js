@@ -6,7 +6,7 @@ import ChatArea from './components/ChatArea';
 import InputBar from './components/InputBar';
 import SettingsModal from './components/SettingsModal';
 
-const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+const BACKEND_URL = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000').replace(/\/$/, '');
 
 export default function Home() {
   const [sidebarOpen, setSidebarOpen] = useState(true);

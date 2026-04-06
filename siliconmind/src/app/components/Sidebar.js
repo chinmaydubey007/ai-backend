@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import AgentStatus from './AgentStatus';
 
-const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+const BACKEND_URL = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000').replace(/\/$/, '');
 
 export default function Sidebar({ isOpen, onToggle, onDocumentsChange, activeSessionId, onSelectSession, onNewChat, onDeleteSession, refreshTrigger, activeTools = [] }) {
   const pathname = usePathname();
