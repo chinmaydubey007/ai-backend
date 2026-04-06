@@ -14,6 +14,10 @@ DATABASE_URL = os.environ.get(
     "sqlite+aiosqlite:///siliconmind.db"
 )
 
+# Ensure SQLite URLs use the async 'aiosqlite' driver if not already specified
+if DATABASE_URL.startswith("sqlite://"):
+    DATABASE_URL = DATABASE_URL.replace("sqlite://", "sqlite+aiosqlite://", 1)
+
 engine = create_async_engine(DATABASE_URL, echo=False)
 async_session_factory = async_sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
 
