@@ -64,10 +64,11 @@ class AIGenerator:
             )
 
         # Local: LM Studio (Gemma 4 4B — for lightweight helper tasks)
+        # Fast timeout (1s) so we don't hang if local model isn't active
         self.local_client = AsyncOpenAI(
             base_url="http://localhost:1234/v1",
             api_key="lm-studio",
-            timeout=30.0
+            timeout=1.0
         )
         self.local_model = "gemma-4-4b" 
         self.local_available = False
@@ -77,6 +78,10 @@ class AIGenerator:
     async def _detect_local_model(self):
         """Auto-detect model name from LM Studio."""
         if self.local_available: return True
+        # Skip local detection if on cloud (Render/Vercel) to prevent hangups
+        if os.environ.get("RENDER") or os.environ.get("VERCEL"):
+            return False
+            
         try:
             models = await self.local_client.models.list()
             if models.data:
