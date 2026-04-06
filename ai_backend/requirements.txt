@@ -3,6 +3,7 @@ fastapi
 uvicorn
 python-multipart
 aiofiles
+httpx
 
 # Database
 sqlalchemy
@@ -19,3 +20,7 @@ python-dotenv
 # RAG Pipeline
 chromadb
 PyMuPDF
+
+# Tools
+duckduckgo_search
+numpy
