@@ -11,7 +11,7 @@ const KnowledgeGraphNoSSR = dynamic(() => import('../components/KnowledgeGraph')
   loading: () => <div style={{ padding: '40px', color: 'var(--text-muted)' }}>Initializing Graph Engine...</div>
 });
 
-const BACKEND_URL = 'http://localhost:8000';
+const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
 export default function ExplorePage() {
   const [sidebarOpen, setSidebarOpen] = useState(true);

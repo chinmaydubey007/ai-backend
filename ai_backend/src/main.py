@@ -44,7 +44,7 @@ def create_app() -> FastAPI:
     # 4. Allow the Next.js frontend to communicate with us
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=["http://localhost:3000", "http://127.0.0.1:3000"],
+        allow_origins=["*"], # Temporarily allow all for easy cloud deployment
         allow_credentials=True,
         allow_methods=["*"],
         allow_headers=["*"],
@@ -61,7 +61,9 @@ def main():
     logger.info("Starting uvicorn server...")
     # 4. Run the web server using Uvicorn
     # 'src.main:app' allows uvicorn to find the app object and supports automatic reloading
-    uvicorn.run("src.main:app", host="0.0.0.0", port=8000, reload=True)
+    # Handle PORT for cloud providers like Render/Fly.io
+    port = int(os.environ.get("PORT", 8000))
+    uvicorn.run("src.main:app", host="0.0.0.0", port=port, reload=True)
 
 if __name__ == "__main__":
     main()

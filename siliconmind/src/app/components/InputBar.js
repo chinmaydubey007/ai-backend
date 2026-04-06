@@ -52,7 +52,7 @@ export default function InputBar({ onSend, onUpload, disabled = false }) {
       const formData = new FormData();
       formData.append('file', file);
       
-      const res = await fetch('http://localhost:8000/api/v1/documents/upload', {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/v1/documents/upload`, {
         method: 'POST',
         body: formData,
       });
