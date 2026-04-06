@@ -3,6 +3,7 @@ import { useState, useRef, useEffect } from 'react';
 
 export default function InputBar({ onSend, onUpload, disabled = false }) {
   const [input, setInput] = useState('');
+  const [tone, setTone] = useState('Standard');
   const [isListening, setIsListening] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadText, setUploadText] = useState('');
@@ -20,7 +21,7 @@ export default function InputBar({ onSend, onUpload, disabled = false }) {
   const handleSubmit = () => {
     const trimmed = input.trim();
     if (!trimmed || disabled) return;
-    onSend(trimmed);
+    onSend(trimmed, tone);
     setInput('');
   };
 
@@ -184,23 +185,45 @@ export default function InputBar({ onSend, onUpload, disabled = false }) {
             </button>
           </div>
           
-          <button 
-            onClick={handleSubmit} 
-            disabled={disabled}
-            style={{ 
-              background: input.trim() ? 'var(--accent-copper)' : 'var(--bg-elevated)', 
-              color: input.trim() ? 'var(--text-inverse)' : 'var(--text-muted)',
-              fontSize: '12px',
-              fontWeight: '600',
-              padding: '8px 20px',
-              borderRadius: '8px',
-              display: 'flex', alignItems: 'center', gap: '8px',
-              transition: 'all 0.15s'
-            }}
-          >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="m22 2-7 20-4-9-9-4z"/><path d="m22 2-10 10"/></svg>
-            Send
-          </button>
+          <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+            <select 
+              value={tone}
+              onChange={(e) => setTone(e.target.value)}
+              disabled={disabled}
+              style={{
+                background: 'var(--bg-surface)',
+                color: 'var(--text-muted)',
+                border: '1px solid var(--border-subtle)',
+                borderRadius: '6px',
+                padding: '6px 12px',
+                fontSize: '11px',
+                outline: 'none',
+                cursor: 'pointer'
+              }}
+            >
+              <option value="Standard">Standard Output</option>
+              <option value="Technical">Heavy Technical</option>
+              <option value="Academic">Academic Paper</option>
+              <option value="Creative">Creative Mentor</option>
+            </select>
+            <button 
+              onClick={handleSubmit} 
+              disabled={disabled}
+              style={{ 
+                background: input.trim() ? 'var(--accent-copper)' : 'var(--bg-elevated)', 
+                color: input.trim() ? 'var(--text-inverse)' : 'var(--text-muted)',
+                fontSize: '12px',
+                fontWeight: '600',
+                padding: '8px 20px',
+                borderRadius: '8px',
+                display: 'flex', alignItems: 'center', gap: '8px',
+                transition: 'all 0.15s'
+              }}
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="m22 2-7 20-4-9-9-4z"/><path d="m22 2-10 10"/></svg>
+              Send
+            </button>
+          </div>
         </div>
       </div>
       

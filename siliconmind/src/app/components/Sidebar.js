@@ -1,10 +1,13 @@
 'use client';
-import { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import AgentStatus from './AgentStatus';
 
 const BACKEND_URL = 'http://localhost:8000';
 
 export default function Sidebar({ isOpen, onToggle, onDocumentsChange, activeSessionId, onSelectSession, onNewChat, onDeleteSession, refreshTrigger, activeTools = [] }) {
+  const pathname = usePathname();
   const [sessions, setSessions] = useState([]);
   const [documents, setDocuments] = useState([]);
   const [isUploading, setIsUploading] = useState(false);
@@ -138,19 +141,58 @@ export default function Sidebar({ isOpen, onToggle, onDocumentsChange, activeSes
         </button>
       </div>
 
-      {/* New Session */}
-      <div style={{ padding: '16px' }}>
-        <button onClick={onNewChat} style={{ 
-          width: '100%', border: '1px solid var(--border-subtle)', 
-          background: 'var(--bg-surface)', padding: '10px 16px', fontSize: '12px', 
-          fontFamily: 'var(--font-sans)', color: 'var(--text-primary)', borderRadius: '6px',
-          display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
-          transition: 'all 0.15s'
-        }}>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 5v14M5 12h14"/></svg>
-          New Session
-        </button>
+      {/* Main Navigation */}
+      <div style={{ padding: '16px 16px 0 16px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+        <Link href="/" style={{ textDecoration: 'none' }}>
+          <div className="nav-item" style={{ 
+            padding: '10px 16px', borderRadius: '6px', fontSize: '12px', fontWeight: 'bold',
+            display: 'flex', alignItems: 'center', gap: '10px', color: 'var(--text-primary)',
+            background: pathname === '/' ? 'var(--bg-surface)' : 'transparent',
+            border: pathname === '/' ? '1px solid var(--accent-copper)' : '1px solid transparent'
+          }}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            Chat & Search
+          </div>
+        </Link>
+        <Link href="/explore" style={{ textDecoration: 'none' }}>
+          <div className="nav-item" style={{ 
+            padding: '10px 16px', borderRadius: '6px', fontSize: '12px', fontWeight: 'bold',
+            display: 'flex', alignItems: 'center', gap: '10px', color: 'var(--text-primary)',
+            background: pathname === '/explore' ? 'var(--bg-surface)' : 'transparent',
+            border: pathname === '/explore' ? '1px solid var(--accent-copper)' : '1px solid transparent'
+          }}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>
+            Knowledge Graph
+          </div>
+        </Link>
+        <Link href="/lab" style={{ textDecoration: 'none' }}>
+          <div className="nav-item" style={{ 
+            padding: '10px 16px', borderRadius: '6px', fontSize: '12px', fontWeight: 'bold',
+            display: 'flex', alignItems: 'center', gap: '10px', color: 'var(--text-primary)',
+            background: pathname === '/lab' ? 'var(--bg-surface)' : 'transparent',
+            border: pathname === '/lab' ? '1px solid var(--accent-copper)' : '1px solid transparent'
+          }}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M14 2H6a2 2 0 0 0-2 2v16c0 1.1.9 2 2 2h12a2 2 0 0 0 2-2V8l-6-6z"/><path d="M14 3v5h5M16 13H8M16 17H8M10 9H8"/></svg>
+            Design Lab
+          </div>
+        </Link>
       </div>
+
+      {/* New Session (Only if on Chat page) */}
+      {pathname === '/' && (
+        <div style={{ padding: '16px' }}>
+          <button onClick={onNewChat} style={{ 
+            width: '100%', border: '1px solid var(--border-subtle)', 
+            background: 'var(--bg-surface)', padding: '10px 16px', fontSize: '12px', 
+            fontFamily: 'var(--font-sans)', color: 'var(--text-primary)', borderRadius: '6px',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
+            transition: 'all 0.15s'
+          }}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 5v14M5 12h14"/></svg>
+            New Session
+          </button>
+        </div>
+      )}
 
       {/* Hidden file input */}
       <input

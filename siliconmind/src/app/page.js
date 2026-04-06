@@ -20,11 +20,12 @@ export default function Home() {
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearching, setIsSearching] = useState(false);
   const chatAreaRef = useRef(null);
+  const isSendingRef = useRef(false);
 
   // Load old messages when active session changes
   useEffect(() => {
-    if (!activeSessionId) {
-      setMessages([]);
+    if (!activeSessionId || isSendingRef.current) {
+      if (!activeSessionId) setMessages([]);
       return;
     }
     const loadMessages = async () => {
@@ -44,11 +45,12 @@ export default function Home() {
     loadMessages();
   }, [activeSessionId]);
 
-  const handleSend = useCallback(async (text) => {
+  const handleSend = useCallback(async (text, tone) => {
     // Add user message
     const userMessage = { role: 'user', content: text };
     setMessages((prev) => [...prev, userMessage]);
     setIsTyping(true);
+    isSendingRef.current = true;
 
     try {
       // Call the SSE streaming endpoint
@@ -57,7 +59,8 @@ export default function Home() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
           prompt: text, 
-          max_tokens: 512,
+          tone: tone || "Standard",
+          max_tokens: 1024,
           session_id: activeSessionId 
         }),
       });
@@ -169,9 +172,11 @@ export default function Home() {
       }
 
       setIsStreaming(false);
+      isSendingRef.current = false;
     } catch (error) {
       setIsTyping(false);
       setIsStreaming(false);
+      isSendingRef.current = false;
       // Show error as AI message
       setMessages((prev) => [
         ...prev,

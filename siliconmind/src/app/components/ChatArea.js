@@ -19,36 +19,80 @@ const ChatArea = forwardRef(function ChatArea({ messages, isTyping, isStreaming 
     }
   }, [messages, isTyping]);
 
-  const renderContent = (text) => {
+  const renderContent = (text, isCurrStreaming) => {
     if (!text) return null;
+
+    let thinkContent = null;
+    let mainContent = text;
+
+    if (text.includes('<think>')) {
+      const parts = text.split('<think>');
+      const afterThink = parts[1];
+      if (afterThink.includes('</think>')) {
+        const thinkParts = afterThink.split('</think>');
+        thinkContent = thinkParts[0];
+        mainContent = parts[0] + thinkParts[1];
+      } else {
+        // Still streaming the thinking block
+        thinkContent = afterThink;
+        mainContent = parts[0]; 
+      }
+    }
+
     return (
-      <div className="message-content markdown-body" style={{ lineHeight: '1.6', fontSize: '13px' }}>
-        <ReactMarkdown
-          remarkPlugins={[remarkGfm]}
-          rehypePlugins={[rehypeRaw]}
-          components={{
-            code({ node, inline, className, children, ...props }) {
-              const match = /language-(\w+)/.exec(className || '');
-              const lang = match ? match[1] : '';
-              if (!inline && lang === 'mermaid') {
-                return <MermaidDiagram chart={String(children).replace(/\n$/, '')} />;
-              }
-              return !inline ? (
-                <pre style={{ background: '#0f172a', border: '1px solid #1e293b', padding: '16px', borderRadius: '4px', overflowX: 'auto', margin: '12px 0' }}>
-                  <code className={className} style={{ fontFamily: 'var(--font-mono)', fontSize: '13px', color: '#e2e8f0' }} {...props}>
-                    {children}
-                  </code>
-                </pre>
-              ) : (
-                <code {...props} className={className} style={{ background: 'rgba(212, 163, 115, 0.1)', color: 'var(--accent-copper)', padding: '2px 4px', borderRadius: '2px', fontFamily: 'var(--font-mono)' }}>
-                  {children}
-                </code>
-              );
-            }
-          }}
-        >
-          {text}
-        </ReactMarkdown>
+      <div className="message-content" style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+        {thinkContent && (
+          <details 
+            className="think-block"
+            open={isCurrStreaming} 
+            style={{
+              background: 'var(--bg-surface)',
+              borderLeft: '2px solid var(--border-subtle)',
+              padding: '12px',
+              borderRadius: '0 8px 8px 0',
+              fontSize: '11px',
+              color: 'var(--text-muted)'
+            }}
+          >
+            <summary style={{ cursor: 'pointer', fontWeight: 'bold', color: 'var(--accent-copper)', fontFamily: 'var(--font-mono)', outline: 'none' }}>
+              🧠 Thought Process
+            </summary>
+            <div style={{ marginTop: '8px', padding: '8px', background: 'var(--bg-elevated)', borderRadius: '4px', whiteSpace: 'pre-wrap', fontFamily: 'var(--font-mono)', lineHeight: '1.4' }}>
+              {thinkContent.trim() || 'Thinking...'}
+            </div>
+          </details>
+        )}
+        
+        {mainContent.trim() && (
+          <div className="markdown-body" style={{ lineHeight: '1.6', fontSize: '13px' }}>
+            <ReactMarkdown
+              remarkPlugins={[remarkGfm]}
+              rehypePlugins={[rehypeRaw]}
+              components={{
+                code({ node, inline, className, children, ...props }) {
+                  const match = /language-(\w+)/.exec(className || '');
+                  const lang = match ? match[1] : '';
+                  if (!inline && lang === 'mermaid') {
+                    return <MermaidDiagram chart={String(children).replace(/\n$/, '')} isStreaming={isCurrStreaming} />;
+                  }
+                  return !inline ? (
+                    <pre style={{ background: '#0f172a', border: '1px solid #1e293b', padding: '16px', borderRadius: '4px', overflowX: 'auto', margin: '12px 0' }}>
+                      <code className={className} style={{ fontFamily: 'var(--font-mono)', fontSize: '13px', color: '#e2e8f0' }} {...props}>
+                        {children}
+                      </code>
+                    </pre>
+                  ) : (
+                    <code {...props} className={className} style={{ background: 'rgba(212, 163, 115, 0.1)', color: 'var(--accent-copper)', padding: '2px 4px', borderRadius: '2px', fontFamily: 'var(--font-mono)' }}>
+                      {children}
+                    </code>
+                  );
+                }
+              }}
+            >
+              {mainContent}
+            </ReactMarkdown>
+          </div>
+        )}
       </div>
     );
   };
@@ -127,7 +171,7 @@ const ChatArea = forwardRef(function ChatArea({ messages, isTyping, isStreaming 
                   </div>
                 )}
 
-                {renderContent(msg.content)}
+                {renderContent(msg.content, isStreaming && index === messages.length - 1)}
 
                 {msg.citations && msg.citations.length > 0 && (
                   <div style={{ marginTop: '24px', display: 'flex', gap: '8px', flexWrap: 'wrap' }}>

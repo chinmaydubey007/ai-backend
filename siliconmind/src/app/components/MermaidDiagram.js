@@ -2,7 +2,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import mermaid from 'mermaid';
 
-export default function MermaidDiagram({ chart }) {
+export default function MermaidDiagram({ chart, isStreaming }) {
   const containerRef = useRef(null);
   const [svgContent, setSvgContent] = useState('');
 
@@ -29,6 +29,11 @@ export default function MermaidDiagram({ chart }) {
     let isMounted = true;
     const renderDiagram = async () => {
       if (!chart || !containerRef.current) return;
+      if (isStreaming) {
+        // Clear SVG and do nothing else while streaming is happening to avoid crashing the parser
+        if (isMounted) setSvgContent('');
+        return;
+      }
       try {
         const id = `mermaid-${Math.random().toString(36).substr(2, 9)}`;
         const { svg } = await mermaid.render(id, chart);
@@ -44,7 +49,7 @@ export default function MermaidDiagram({ chart }) {
     };
     renderDiagram();
     return () => { isMounted = false; };
-  }, [chart]);
+  }, [chart, isStreaming]);
 
   return (
     <div 
@@ -60,7 +65,15 @@ export default function MermaidDiagram({ chart }) {
         overflowX: 'auto',
         textAlign: 'center'
       }}
-      dangerouslySetInnerHTML={{ __html: svgContent || '<div style="color:var(--text-muted); font-size:12px; font-family:monospace;">RENDERING SCHEMAS...</div>' }}
-    />
+    >
+      {isStreaming ? (
+        <div style={{ textAlign: 'left', fontFamily: 'var(--font-mono)', fontSize: '11px', color: 'var(--accent-copper)' }}>
+          <div style={{ marginBottom: '8px', opacity: 0.8 }}>⚙️ GENERATING ARCHITECTURE GRAPH...</div>
+          <pre style={{ margin: 0, opacity: 0.6 }}>{chart}</pre>
+        </div>
+      ) : (
+        <div dangerouslySetInnerHTML={{ __html: svgContent || '<div style="color:var(--text-muted); font-size:12px; font-family:monospace;">RENDERING SCHEMAS...</div>' }} />
+      )}
+    </div>
   );
 }

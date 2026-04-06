@@ -75,19 +75,20 @@ body::before {
 .app-layout { 
   display: flex; 
   height: 100vh; 
-  width: 100%;
-  position: relative; 
+  width: 100vw;
+  position: fixed;
+  inset: 0;
   z-index: 1; 
   overflow: hidden; 
+  background: var(--bg-primary);
 }
 
 .main-content {
-  flex-grow: 1;
-  width: 0; /* Important for flex-grow to work in some browsers */
+  flex: 1;
   display: flex;
   flex-direction: column;
   height: 100vh;
-  overflow: hidden;
+  min-width: 0; /* Prevents flex-item from expanding beyond container */
   position: relative;
   background: var(--bg-primary);
 }

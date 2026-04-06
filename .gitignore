@@ -1,19 +1,29 @@
-# Node / Frontend
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+ai_backend/uploads/
+ai_backend/vector_db/
+
+# Node/JS (Frontend)
 siliconmind/node_modules/
 siliconmind/.next/
-siliconmind/dist/
-siliconmind/.env
-siliconmind/.env.local
+siliconmind/out/
+siliconmind/build/
+npm-debug.log*
 
-# Python / Backend
-ai_backend/.venv/
-ai_backend/venv/
-ai_backend/__pycache__/
-ai_backend/**/*.pyc
-ai_backend/.env
-ai_backend/vector_db/
-ai_backend/uploads/
-*.sqlite3
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
 
 # OS
 .DS_Store

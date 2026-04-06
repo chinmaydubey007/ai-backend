@@ -3,6 +3,7 @@ from typing import Optional, List, Dict, Any
 
 class GenerateRequest(BaseModel):
     prompt: str = Field(..., title="Prompt text", description="The input text prompt for the AI model.", min_length=1)
+    tone: str = Field("Standard", title="Output Tone", description="The requested writing tone or persona.")
     max_tokens: int = Field(100, title="Max Tokens", description="Maximum number of tokens to generate.", gt=0)
     session_id: Optional[str] = Field(None, title="Session ID", description="The chat session ID if continuing an existing conversation.")
 

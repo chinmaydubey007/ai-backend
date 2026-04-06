@@ -10,6 +10,8 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 from src.api.routes import router as api_router
+from src.api.knowledge_routes import router as knowledge_router
+from src.api.lab_routes import router as lab_router
 from src.services.database import init_db
 
 # 1. Configure production-grade logging
@@ -42,14 +44,15 @@ def create_app() -> FastAPI:
     # 4. Allow the Next.js frontend to communicate with us
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=["http://localhost:3000"],
+        allow_origins=["http://localhost:3000", "http://127.0.0.1:3000"],
         allow_credentials=True,
         allow_methods=["*"],
         allow_headers=["*"],
     )
-    
     # 5. Mount our routes
     app.include_router(api_router)
+    app.include_router(knowledge_router)
+    app.include_router(lab_router)
     return app
 
 app = create_app()

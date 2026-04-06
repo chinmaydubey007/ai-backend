@@ -161,36 +161,13 @@ async def stream_text(request: GenerateRequest):
             for c in context_chunks
         ]
 
-    # Build the RAG-enhanced prompt
+    # Package the context chunks if available
+    context_text = None
     if context_chunks:
         context_text = "\n\n---\n\n".join([
             f"[Source: {c['metadata'].get('source', 'unknown')}, Page {c['metadata'].get('page', '?')}]\n{c['text']}"
             for c in context_chunks
         ])
-        enhanced_prompt = f"""You are SiliconMind, an expert AI assistant for VLSI and embedded systems engineering.
-
-Answer the user's question using the provided document excerpts if they are relevant. If the excerpts are relevant, always cite your sources using the format [Source · Page X] at the end of relevant statements.
-
-If the documents do not contain the answer, or if the question is general, use your extensive internal knowledge of hardware, VLSI, and embedded systems to provide the best possible expert answer. Do not apologize for missing documents, just answer the question.
-
-If the user asks for a flowchart, block diagram, state machine, or visual representation, YOU MUST output valid Mermaid.js code within a ````mermaid ```` code block.
-
---- DOCUMENT EXCERPTS ---
-{context_text}
---- END EXCERPTS ---
-
-User Question: {request.prompt}"""
-    else:
-        enhanced_prompt = f"""You are SiliconMind, an expert AI assistant for VLSI and embedded systems engineering. 
-Answer the following question knowledgeably and concisely.
-
-If the user asks for a flowchart, block diagram, state machine, or visual representation of any architecture or logic, YOU MUST output syntax within a ````mermaid ```` code block to visualize the concept natively for the user. Example:
-```mermaid
-graph TD;
-    A-->B;
-```
-
-User Question: {request.prompt}"""
 
     async def event_generator():
         try:
@@ -223,7 +200,9 @@ User Question: {request.prompt}"""
             # Stream tokens
             ai_content = ""
             async for payload in ai_service.stream_text(
-                prompt=enhanced_prompt,
+                prompt=request.prompt,
+                context_text=context_text,
+                tone=request.tone,
                 max_tokens=request.max_tokens
             ):
                 if payload["type"] == "token":
