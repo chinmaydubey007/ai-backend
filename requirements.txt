@@ -1,0 +1,21 @@
+# Base web framework and server
+fastapi
+uvicorn
+python-multipart
+aiofiles
+
+# Database
+sqlalchemy
+aiosqlite
+asyncpg
+
+# Data Validation
+pydantic
+
+# AI Integration
+openai
+python-dotenv
+
+# RAG Pipeline
+chromadb
+PyMuPDF
