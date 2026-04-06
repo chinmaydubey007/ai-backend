@@ -12,8 +12,19 @@ router = APIRouter(prefix="/api/v1/knowledge", tags=["Knowledge Graph"])
 GRAPH_PATH = os.path.join(os.path.dirname(__file__), "..", "..", "data", "knowledge_graph.json")
 
 def load_graph():
-    with open(GRAPH_PATH, "r", encoding="utf-8") as f:
-        return json.load(f)
+    # Attempt to find the file in several likely locations for cloud compatibility
+    paths_to_try = [
+        GRAPH_PATH,
+        os.path.join(os.getcwd(), "data", "knowledge_graph.json"),
+        os.path.join(os.getcwd(), "ai_backend", "data", "knowledge_graph.json"),
+    ]
+    
+    for path in paths_to_try:
+        if os.path.exists(path):
+            with open(path, "r", encoding="utf-8") as f:
+                return json.load(f)
+    
+    raise FileNotFoundError(f"Knowledge graph data not found. Tried: {paths_to_try}")
 
 class ExplainRequest(BaseModel):
     node_id: str = Field(..., description="The concept node ID to explain")

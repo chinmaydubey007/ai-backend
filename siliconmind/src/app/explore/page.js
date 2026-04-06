@@ -94,8 +94,8 @@ export default function ExplorePage() {
 
         <div style={{ display: 'flex', flex: 1, minHeight: 0 }}>
           {/* Graph Engine Area */}
-          <div style={{ flex: 1, padding: '20px', display: 'flex', flexDirection: 'column', minWidth: 0 }}>
-            <div style={{ flex: 1, position: 'relative', border: '1px solid var(--border-subtle)', borderRadius: '8px' }}>
+          <div style={{ flex: 1, padding: '20px', display: 'flex', flexDirection: 'column', minWidth: 0, height: 'calc(100vh - 80px)' }}>
+            <div style={{ flex: 1, position: 'relative', border: '1px solid var(--border-subtle)', borderRadius: '8px', minHeight: '500px' }}>
               <KnowledgeGraphNoSSR graphData={graphData} onNodeClick={handleNodeClick} />
             </div>
           </div>
